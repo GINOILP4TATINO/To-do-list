@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do List</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="./script.js"></script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <button id="openProjectModal">+ Nuovo Progetto</button>
+      <ul id="projectList"></ul>
+      <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="themeCheckbox">
+          <input type="checkbox" id="themeCheckbox" />
+          <span class="slider"></span>
+        </label>
+        <span>Dark Mode</span>
+      </div>
+    </div>
+
+    <div class="main">
+      <h1>To Do List</h1>
+      <div class="controls">
+        <select id="sortSelect">
+          <option value="createdAt">Data creazione</option>
+          <option value="due">Data scadenza</option>
+          <option value="title">Nome</option>
+        </select>
+        <button id="toggleSortOrderBtn" title="Cambia ordine">⬆️</button>
+        <select id="filterSelect">
+          <option value="all">Tutti</option>
+          <option value="completed">Completati</option>
+          <option value="pending">Da completare</option>
+        </select>
+      </div>
+      <button id="openModalBtn">+ Nuova Task</button>
+      <ul id="taskList"></ul>
+    </div>
+
+    <!-- Modal per task -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <div class="close-container">
+          <h2>Nuova Task</h2>
+          <span id="closeModal" class="close">&times;</span>
+        </div>
+        <input type="text" id="taskInput" placeholder="Titolo task" />
+        <textarea id="descInput" placeholder="Descrizione"></textarea>
+        <input type="date" id="dueDateInput" />
+        <button id="addTaskBtn">Aggiungi</button>
+      </div>
+    </div>
+
+    <!-- Modal per progetto -->
+    <div id="projectModal" class="modal">
+      <div class="modal-content">
+        <div class="close-container">
+          <h2>Nuovo Progetto</h2>
+          <span id="closeProjectModal" class="close">&times;</span>
+        </div>
+        <input type="text" id="projectInput" placeholder="Nome progetto" />
+        <button id="addProjectBtn">Crea</button>
+      </div>
+    </div>
+  </body>
+</html>

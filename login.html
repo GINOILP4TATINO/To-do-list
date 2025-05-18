@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login / Signup</title>
+    <link rel="stylesheet" href="login.css" />
+    <script type="module" src="./login.js"></script>
+  </head>
+  <body class="login-page">
+    <div class="login-page">
+      <div class="login-container" id="authContainer">
+        <h1 id="formTitle">Accedi</h1>
+        <form id="authForm">
+          <input type="email" id="email" placeholder="Email" required />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+          />
+          <div id="confirmPasswordContainer" style="display: none">
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Conferma password"
+            />
+          </div>
+          <button type="submit" id="accessBtn">Accedi</button>
+        </form>
+        <p id="toggleText">
+          Non hai un account? <a href="#" id="toggleLink">Registrati</a>
+        </p>
+      </div>
+      <div class="theme-switch-wrapper">
+        <span>Dark Mode</span>
+        <label class="theme-switch">
+          <input type="checkbox" id="themeToggle" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  </body>
+</html>
