@@ -104,7 +104,7 @@ function signIn(auth, email, pass) {
       const user = userCredential.user;
       let uid = user.uid;
       localStorage.setItem("uid", uid);
-      window.location.href = "index.html";
+      window.location.href = "home.html";
       // ...
     })
     .catch((error) => {
