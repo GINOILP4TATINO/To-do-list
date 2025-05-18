@@ -89,7 +89,7 @@ function signUp(auth, email, pass) {
         uid,
         email,
         pass,
-      }).then(() => (window.location.href = "index.html"));
+      }).then(() => (window.location.href = "home.html"));
     })
     .catch((error) => {
       const errorCode = error.code;
