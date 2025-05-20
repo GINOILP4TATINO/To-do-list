@@ -1,5 +1,4 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
-
 import {
   getDatabase,
   ref,
@@ -21,15 +20,23 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
 const firstLog = localStorage.getItem("firstLog");
-const uid = localStorage.getItem("uid");
-localStorage.removeItem("uid");
+let uid;
+if (localStorage.getItem("uid")) {
+  uid = localStorage.getItem("uid");
+  localStorage.removeItem("uid");
+  sessionStorage.setItem("uid", uid);
+} else if (sessionStorage.getItem("uid")) uid = sessionStorage.getItem("uid");
 localStorage.removeItem("firstLog");
 
 let projects = [];
 let tasks = [];
 let selectedProjectId = null;
 let sortOrder = "asc";
+
+let editingTaskId = null; // id della task in modifica o null
+let editingProjId = null;
 
 const projectList = document.getElementById("projectList");
 const taskList = document.getElementById("taskList");
@@ -40,6 +47,8 @@ const taskInput = document.getElementById("taskInput");
 const descInput = document.getElementById("descInput");
 const dueDateInput = document.getElementById("dueDateInput");
 const addTaskBtn = document.getElementById("addTaskBtn");
+const taskTitle = document.getElementById("taskTitle");
+const projTitle = document.getElementById("projTitle");
 
 const openProjectModal = document.getElementById("openProjectModal");
 const projectModal = document.getElementById("projectModal");
@@ -51,11 +60,20 @@ const sortSelect = document.getElementById("sortSelect");
 const filterSelect = document.getElementById("filterSelect");
 
 const themeCheckbox = document.getElementById("themeCheckbox");
-themeCheckbox.checked = localStorage.getItem("theme") === "true";
+if (localStorage.getItem("theme")) {
+  themeCheckbox.checked = localStorage.getItem("theme") === "true";
+  localStorage.removeItem("theme");
+  sessionStorage.setItem("theme", themeCheckbox.checked);
+} else if (sessionStorage.getItem("theme"))
+  themeCheckbox.checked = sessionStorage.getItem("theme");
 document.body.classList.toggle("dark", themeCheckbox.checked);
-localStorage.removeItem("theme");
 
-const toggleSortOrderBtn = document.getElementById("toggleSortOrderBtn"); // pulsante cambia ordine
+const sidebar = document.querySelector(".sidebar");
+const toggleBtn = document.getElementById("sidebarToggle");
+
+toggleBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("active");
+});
 
 if (firstLog) {
   const defaultProject = {
@@ -71,7 +89,7 @@ if (firstLog) {
 const projectRef = ref(db, "projects/" + uid);
 get(projectRef).then((snapshot) => {
   if (snapshot.val()) projects = snapshot.val();
-  selectedProjectId = projects[0].id;
+  selectedProjectId = projects.length ? projects[0].id : null;
   renderProjects();
   renderTasks();
 });
@@ -113,12 +131,7 @@ function renderProjects() {
     editBtn.textContent = "✎";
     editBtn.onclick = (e) => {
       e.stopPropagation();
-      const newName = prompt("Modifica il nome del progetto:", proj.name);
-      if (newName) {
-        proj.name = newName;
-        updateProjects();
-        renderProjects();
-      }
+      openEditProjectModal(proj);
     };
 
     const deleteBtn = document.createElement("button");
@@ -154,27 +167,34 @@ function renderProjects() {
 }
 
 async function renderTasks() {
+  if (!selectedProjectId) {
+    taskList.innerHTML = "<li>Nessun progetto selezionato</li>";
+    return;
+  }
+
   let tasksRef = ref(db, "tasks/" + selectedProjectId);
   await get(tasksRef).then((snapshot) => {
     tasks = snapshot.val() || [];
   });
   taskList.innerHTML = "";
-  // let filtered = tasks.filter((t) => t.projectId === selectedProjectId);
 
   const filter = filterSelect.value;
-  if (filter === "completed") tasks = tasks.filter((t) => t.completed);
-  if (filter === "pending") tasks = tasks.filter((t) => !t.completed);
+  let filteredTasks = tasks;
+  if (filter === "completed") filteredTasks = tasks.filter((t) => t.completed);
+  else if (filter === "pending")
+    filteredTasks = tasks.filter((t) => !t.completed);
 
   const sort = sortSelect.value;
-  tasks.sort((a, b) => {
+  filteredTasks.sort((a, b) => {
     let comp;
     if (sort === "title") comp = a.title.localeCompare(b.title);
     else comp = new Date(a[sort]) - new Date(b[sort]);
-    return sortOrder === "asc" ? comp : -comp; // applico ordine asc/desc
+    return sortOrder === "asc" ? comp : -comp;
   });
 
-  tasks.forEach((task, index) => {
+  filteredTasks.forEach((task) => {
     const li = document.createElement("li");
+    li.classList.toggle("completed", task.completed);
     const header = document.createElement("div");
     header.className = "task-header";
 
@@ -198,13 +218,29 @@ async function renderTasks() {
     removeBtn.className = "remove-btn";
     removeBtn.textContent = "✕";
     removeBtn.onclick = () => {
-      tasks.splice(index, 1);
-      updateTasks();
-      renderTasks();
+      if (confirm("Sei sicuro di voler eliminare questa task?")) {
+        tasks.splice(
+          tasks.findIndex((t) => t.id === task.id),
+          1
+        );
+        updateTasks();
+        renderTasks();
+      }
     };
 
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✎";
+    editBtn.className = "edit-btn";
+    editBtn.onclick = () => {
+      openEditTaskModal(task);
+    };
+
+    const controls = document.createElement("span");
+    controls.appendChild(editBtn);
+    controls.appendChild(removeBtn);
+
     header.appendChild(label);
-    header.appendChild(removeBtn);
+    header.appendChild(controls);
 
     const details = document.createElement("div");
     details.className = "task-details";
@@ -231,84 +267,128 @@ async function renderTasks() {
   });
 }
 
-openModalBtn.onclick = () => modal.classList.add("show");
-closeModal.onclick = () => modal.classList.remove("show");
-openProjectModal.onclick = () => projectModal.classList.add("show");
-closeProjectModal.onclick = () => projectModal.classList.remove("show");
+function openEditTaskModal(task) {
+  editingTaskId = task.id;
+  taskInput.value = task.title;
+  descInput.value = task.desc || "";
+  dueDateInput.value = task.due || "";
+  taskTitle.textContent = "Modifica Task";
+  addTaskBtn.textContent = "Salva Modifiche";
+  modal.classList.add("show");
+}
 
-addProjectBtn.onclick = () => {
-  const name = projectInput.value.trim();
-  if (!name) return;
-  const id = crypto.randomUUID();
-  projects.push({ id, name });
-  updateProjects();
-  selectedProjectId = id;
-  projectInput.value = "";
-  projectModal.classList.remove("show");
-  renderProjects();
+function openEditProjectModal(proj) {
+  editingProjId = proj.id;
+  projectInput.value = proj.name;
+  projTitle.textContent = "Modifica Progetto";
+  addProjectBtn.textContent = "Salva Modifiche";
+  projectModal.classList.add("show");
+}
+
+openModalBtn.onclick = () => {
+  editingTaskId = null;
+  taskInput.value = "";
+  descInput.value = "";
+  dueDateInput.value = "";
+  taskTitle.textContent = "Nuova Task";
+  addTaskBtn.textContent = "Aggiungi Task";
+  modal.classList.add("show");
+};
+
+closeModal.onclick = () => {
+  modal.classList.remove("show");
 };
 
 addTaskBtn.onclick = () => {
   const title = taskInput.value.trim();
-  const desc = descInput.value.trim();
-  const due = dueDateInput.value;
-
-  if (!selectedProjectId) {
-    alert(
-      "Non è possibile creare una task senza aver selezionato un progetto. Crea o seleziona un progetto prima."
-    );
+  if (!title) {
+    alert("Il titolo è obbligatorio.");
     return;
   }
 
-  if (!title) return;
-
-  const task = {
-    id: crypto.randomUUID(),
-    title,
-    desc,
-    due,
-    createdAt: new Date().toISOString(),
-    completed: false,
-    projectId: selectedProjectId,
-    notified: false,
-  };
-
-  tasks.push(task);
-  updateTasks();
-  modal.classList.remove("show");
-  taskInput.value = "";
-  descInput.value = "";
-  dueDateInput.value = "";
-  renderTasks();
-};
-
-// Aggiorna le tasks al cambiare filtro o ordinamento
-filterSelect.addEventListener("change", renderTasks);
-sortSelect.addEventListener("change", renderTasks);
-
-// Gestione toggle ordine asc/desc
-toggleSortOrderBtn.onclick = () => {
-  if (sortOrder === "asc") {
-    sortOrder = "desc";
-    toggleSortOrderBtn.textContent = "⬇️";
+  if (editingTaskId) {
+    // Modifica task esistente
+    const task = tasks.find((t) => t.id === editingTaskId);
+    if (task) {
+      task.title = title;
+      task.desc = descInput.value.trim();
+      task.due = dueDateInput.value;
+    }
   } else {
-    sortOrder = "asc";
-    toggleSortOrderBtn.textContent = "⬆️";
+    // Nuova task
+    const newTask = {
+      id: crypto.randomUUID(),
+      title,
+      desc: descInput.value.trim(),
+      due: dueDateInput.value,
+      createdAt: new Date().toLocaleDateString(),
+      completed: false,
+      projectId: selectedProjectId,
+      notified: false,
+    };
+    tasks.push(newTask);
   }
+
+  updateTasks();
   renderTasks();
+  modal.classList.remove("show");
 };
 
-window.onclick = (event) => {
-  if (event.target === modal) modal.classList.remove("show");
-  if (event.target === projectModal) projectModal.classList.remove("show");
-};
-
-themeCheckbox.addEventListener("change", () => {
-  document.body.classList.toggle("dark");
-});
-function updateTasks() {
-  set(ref(db, "tasks/" + selectedProjectId), tasks);
-}
 function updateProjects() {
-  set(ref(db, "projects/" + uid), projects);
+  const projectRef = ref(db, "projects/" + uid);
+  set(projectRef, projects);
 }
+
+function updateTasks() {
+  if (!selectedProjectId) return;
+  const tasksRef = ref(db, "tasks/" + selectedProjectId);
+  set(tasksRef, tasks);
+}
+
+sortSelect.onchange = () => renderTasks();
+filterSelect.onchange = () => renderTasks();
+
+themeCheckbox.onchange = () => {
+  document.body.classList.toggle("dark", themeCheckbox.checked);
+  sessionStorage.setItem("theme", themeCheckbox.checked);
+};
+
+openProjectModal.onclick = () => {
+  editingProjId = null;
+  projectModal.classList.add("show");
+  projectInput.value = "";
+  projTitle.textContent = "Nuovo Progetto";
+  addProjectBtn.textContent = "Crea";
+};
+
+closeProjectModal.onclick = () => {
+  projectModal.classList.remove("show");
+};
+
+addProjectBtn.onclick = () => {
+  const name = projectInput.value.trim();
+  if (editingProjId) {
+    // Modifica proj esistente
+    const proj = projects.find((t) => t.id === editingProjId);
+    if (proj) {
+      proj.name = name;
+    }
+  } else {
+    if (!name) {
+      alert("Il nome del progetto è obbligatorio.");
+      return;
+    }
+
+    let id = crypto.randomUUID();
+    projects.push({ id, name });
+    selectedProjectId = id;
+    renderTasks();
+  }
+
+  updateProjects();
+  renderProjects();
+  projectModal.classList.remove("show");
+};
+
+renderProjects();
+renderTasks();

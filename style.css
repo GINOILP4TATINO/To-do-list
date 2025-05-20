@@ -14,7 +14,7 @@ body {
 .sidebar {
   width: 250px;
   background-color: #fff;
-  border-right: 2px solid #66bb6a; /* verde chiaro */
+  border-right: 2px solid #66bb6a;
   padding: 20px;
   box-sizing: border-box;
   display: flex;
@@ -24,7 +24,7 @@ body {
 
 .sidebar button#openProjectModal,
 .sidebar button#themeToggle {
-  background-color: #66bb6a; /* verde chiaro */
+  background-color: #66bb6a;
   color: white;
   border: none;
   padding: 10px;
@@ -36,7 +36,7 @@ body {
 
 .sidebar button#openProjectModal:hover,
 .sidebar button#themeToggle:hover {
-  background-color: #2e7d32; /* verde scuro */
+  background-color: #2e7d32;
 }
 
 #projectList {
@@ -67,7 +67,6 @@ body {
   background-color: #f1f8f1;
 }
 
-/* Pulsanti modifica/elimina progetti */
 #projectList li button {
   background: transparent;
   border: none;
@@ -89,7 +88,6 @@ body {
   background-color: #fff;
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
 }
 
 h1 {
@@ -199,19 +197,30 @@ h1 {
   color: #2e7d32;
 }
 
+#taskList li .edit-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #66bb6a;
+  transition: color 0.3s ease;
+}
+
+#taskList li .edit-btn:hover {
+  color: #2e7d32;
+}
+
 #taskList li .task-details {
   font-size: 14px;
   color: #444;
 }
 
-/* Task in scadenza (bordi e sfondo differenziati) */
 #taskList li[style*="border-left"] {
   border-left-width: 5px !important;
   border-left-color: #2e7d32 !important;
   background-color: #e8f5e9 !important;
 }
 
-/* Modal */
 .modal {
   position: fixed;
   top: 0;
@@ -282,7 +291,6 @@ h1 {
   background-color: #2e7d32;
 }
 
-/* TEMA SCURO */
 body.dark {
   background-color: #121212;
   color: #e0e0e0;
@@ -290,20 +298,20 @@ body.dark {
 
 body.dark .sidebar {
   background-color: #1a1a1a;
-  border-right: 2px solid #1e40ff; /* blu scuro */
+  border-right: 2px solid #c62828;
   color: #e0e0e0;
 }
 
 body.dark .sidebar button#openProjectModal,
 body.dark .sidebar button#themeToggle {
-  background-color: #1e40ff; /* blu più scuro */
+  background-color: #c62828;
   color: #e0e0e0;
   border: none;
 }
 
 body.dark .sidebar button#openProjectModal:hover,
 body.dark .sidebar button#themeToggle:hover {
-  background-color: #0026b3; /* blu scurissimo */
+  background-color: #8e0000;
 }
 
 body.dark #projectList li {
@@ -313,8 +321,8 @@ body.dark #projectList li {
 }
 
 body.dark #projectList li.active {
-  background-color: #2333ff22;
-  border-color: #1e40ff;
+  background-color: #222;
+  border-color: #c62828;
 }
 
 body.dark #projectList li:hover:not(.active) {
@@ -322,11 +330,11 @@ body.dark #projectList li:hover:not(.active) {
 }
 
 body.dark #projectList li button {
-  color: #1e40ff;
+  color: #c62828;
 }
 
 body.dark #projectList li button:hover {
-  color: #0026b3;
+  color: #8e0000;
 }
 
 body.dark .main {
@@ -337,28 +345,28 @@ body.dark .main {
 body.dark .controls select,
 body.dark .controls button {
   background-color: #121212;
-  border: 1px solid #0026b3;
+  border: 1px solid #8e0000;
   color: #e0e0e0;
 }
 
 body.dark .controls select:hover,
 body.dark .controls button:hover {
-  background-color: #1e40ff;
+  background-color: #c62828;
 }
 
 body.dark #openModalBtn {
-  background-color: #1e40ff;
+  background-color: #c62828;
   border: none;
   color: #e0e0e0;
 }
 
 body.dark #openModalBtn:hover {
-  background-color: #0026b3;
+  background-color: #8e0000;
 }
 
 body.dark #taskList li {
   background-color: #222;
-  border-color: #1e40ff;
+  border-color: #c62828;
   color: #e0e0e0;
 }
 
@@ -367,16 +375,24 @@ body.dark #taskList li.completed span {
 }
 
 body.dark #taskList li[style*="border-left"] {
-  border-left-color: #1e40ff !important;
-  background-color: #0026b322 !important;
+  border-left-color: #c62828 !important;
+  background-color: #ffebee !important;
 }
 
 body.dark #taskList li .remove-btn {
-  color: #1e40ff;
+  color: #c62828;
 }
 
 body.dark #taskList li .remove-btn:hover {
-  color: #0026b3;
+  color: #8e0000;
+}
+
+body.dark #taskList li .edit-btn {
+  color: #c62828;
+}
+
+body.dark #taskList li .edit-btn:hover {
+  color: #8e0000;
 }
 
 body.dark .modal-content {
@@ -389,26 +405,32 @@ body.dark .modal-content input[type="text"],
 body.dark .modal-content textarea,
 body.dark .modal-content input[type="date"] {
   background-color: #333;
-  border: 1px solid #1e40ff;
+  border: 1px solid #c62828;
   color: #e0e0e0;
+}
+
+body.dark .modal-content input:is(:-webkit-autofill, :autofill) {
+  -webkit-box-shadow: 0 0 0px 1000px #333 inset !important;
+  -webkit-text-fill-color: #e0e0e0;
 }
 
 body.dark .modal-content input[type="text"]:focus,
 body.dark .modal-content textarea:focus,
 body.dark .modal-content input[type="date"]:focus {
-  border-color: #0026b3;
+  border-color: #8e0000;
 }
 
 body.dark .modal-content button {
-  background-color: #1e40ff;
+  background-color: #c62828;
   color: #e0e0e0;
 }
 
 body.dark .modal-content button:hover {
-  background-color: #1e40ff;
+  background-color: #8e0000;
 }
+
 .controls button#toggleSortOrderBtn {
-  background-color: #fff; /* chiaro */
+  background-color: #fff;
   border: 1px solid #66bb6a;
   color: #2e7d32;
   padding: 8px 12px;
@@ -424,26 +446,25 @@ body.dark .modal-content button:hover {
   color: #1b4d1b;
 }
 
-/* Tema scuro - pulsante Cambia ordine */
 body.dark .controls button#toggleSortOrderBtn {
   background-color: #121212;
-  border: 1px solid #0026b3;
+  border: 1px solid #8e0000;
   color: #e0e0e0;
 }
 
 body.dark .controls button#toggleSortOrderBtn:hover {
-  background-color: #1e40ff;
-  /* border-color: #001a80; */
-  color: #c0cfff;
+  background-color: #c62828;
+  color: #ffd2d2;
 }
 
-/* Migliore leggibilità descrizione task in tema scuro */
 body.dark #taskList li .task-details {
-  color: #ccccff; /* colore più chiaro e contrastato */
+  color: #ffcccc;
 }
+
 .theme-switch-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-top: 10px;
   font-family: Arial, sans-serif;
@@ -490,12 +511,13 @@ body.dark #taskList li .task-details {
 }
 
 .theme-switch input:checked + .slider {
-  background-color: #1e40ff; /* blu scuro per tema scuro */
+  background-color: #c62828;
 }
 
 .theme-switch input:checked + .slider:before {
   transform: translateX(26px);
 }
+
 .close {
   background: transparent;
   border: none;
@@ -504,16 +526,109 @@ body.dark #taskList li .task-details {
   color: #66bb6a;
   transition: color 0.3s ease;
 }
+
 .close:hover {
   color: #2e7d32;
 }
+
 body.dark .close {
-  color: #1e40ff;
+  color: #c62828;
 }
+
 body.dark .close:hover {
-  color: #0026b3;
+  color: #8e0000;
 }
+
 .close-container {
   display: flex;
   justify-content: space-between;
+}
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 101;
+  background-color: #66bb6a;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  font-size: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  background-color: #2e7d32;
+}
+body.dark .sidebar-toggle {
+  background-color: #c62828;
+}
+body.dark .sidebar-toggle:hover {
+  background-color: #8e0000;
+}
+input[type="checkbox"] {
+  accent-color: #66bb6a;
+}
+body.dark input[type="checkbox"] {
+  accent-color: #c62828;
+}
+/* Responsive Design per smartphone e tablet */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+    overflow: auto;
+    height: auto;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    height: 100%;
+    z-index: 100;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .main {
+    padding-top: 60px;
+  }
+
+  .sidebar-toggle {
+    display: block;
+  }
+
+  .sidebar button#openProjectModal {
+    margin-top: 40px;
+  }
+
+  #projectList {
+    max-height: 80vh;
+    overflow-y: auto;
+    flex: 1 1 100%;
+  }
+
+  .theme-switch-wrapper {
+    margin: 0 auto;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-content {
+    width: 90%;
+  }
+
+  .close-container {
+    flex-direction: column;
+    align-items: flex-end;
+  }
 }

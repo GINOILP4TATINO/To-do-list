@@ -8,6 +8,8 @@
     <script type="module" src="./script.js"></script>
   </head>
   <body>
+    <button id="sidebarToggle" class="sidebar-toggle">☰ Menu</button>
+
     <div class="sidebar">
       <button id="openProjectModal">+ Nuovo Progetto</button>
       <ul id="projectList"></ul>
@@ -43,7 +45,7 @@
     <div id="modal" class="modal">
       <div class="modal-content">
         <div class="close-container">
-          <h2>Nuova Task</h2>
+          <h2 id="taskTitle">Nuova Task</h2>
           <span id="closeModal" class="close">&times;</span>
         </div>
         <input type="text" id="taskInput" placeholder="Titolo task" />
@@ -57,7 +59,7 @@
     <div id="projectModal" class="modal">
       <div class="modal-content">
         <div class="close-container">
-          <h2>Nuovo Progetto</h2>
+          <h2 id="projTitle">Nuovo Progetto</h2>
           <span id="closeProjectModal" class="close">&times;</span>
         </div>
         <input type="text" id="projectInput" placeholder="Nome progetto" />

@@ -85,6 +85,7 @@ function signUp(auth, email, pass) {
       let uid = user.uid;
       localStorage.setItem("firstLog", true);
       localStorage.setItem("uid", uid);
+      sessionStorage.setItem("uid", uid);
       update(ref(db, "users/" + uid), {
         uid,
         email,

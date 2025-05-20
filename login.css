@@ -3,6 +3,7 @@
   --text-color: #333;
   --card-bg: #f9f9f9;
   --accent-color: #6ac26a; /* verde chiaro */
+  --hover-color: #2e7d32;
   --input-bg: #fff;
   --border-color: #ccc;
 }
@@ -11,7 +12,8 @@ body.dark {
   --bg-color: #121212;
   --text-color: #eee;
   --card-bg: #1e1e1e;
-  --accent-color: #1e40ff; /* blu scuro */
+  --accent-color: #c62828; /* rosso scuro */
+  --hover-color: #8e0000;
   --input-bg: #1c1c1c;
   --border-color: #444;
 }
@@ -78,6 +80,11 @@ html {
   border-color: var(--accent-color);
 }
 
+.login-container input:is(:-webkit-autofill, :autofill) {
+  -webkit-box-shadow: 0 0 0px 1000px var(--input-bg) inset !important;
+  -webkit-text-fill-color: var(--text-color);
+}
+
 .login-container button {
   padding: 0.9rem 1rem;
   font-size: 1rem;
@@ -90,7 +97,7 @@ html {
 }
 
 .login-container button:hover {
-  filter: brightness(1.1);
+  background-color: var(--hover-color);
 }
 
 .login-container p {
@@ -164,4 +171,38 @@ html {
 
 .theme-switch input:checked + .slider:before {
   transform: translateX(20px);
+}
+@media screen and (max-width: 480px) {
+  .login-container {
+    padding: 1.5rem;
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+
+  .login-container h1 {
+    font-size: 1.3rem;
+  }
+
+  .login-container input,
+  .login-container button {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+
+  .theme-switch {
+    width: 40px;
+    height: 22px;
+  }
+
+  .slider:before {
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+  }
+
+  .theme-switch input:checked + .slider:before {
+    transform: translateX(18px);
+  }
 }
