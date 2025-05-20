@@ -72,10 +72,12 @@ function toggleLinkClick(e) {
 
 authForm.addEventListener("submit", (e) => {
   e.preventDefault();
+  showLoader();
   if (isSignup) {
     if (pass.value === confirmPass.value) signUp(auth, email.value, pass.value);
     else alert("Password don't match");
   } else signIn(auth, email.value, pass.value);
+  hideLoader();
 });
 function signUp(auth, email, pass) {
   createUserWithEmailAndPassword(auth, email, pass)
@@ -113,4 +115,11 @@ function signIn(auth, email, pass) {
       const errorMessage = error.message;
       alert(errorMessage);
     });
+}
+function showLoader() {
+  document.getElementById("loader").classList.remove("hidden");
+}
+
+function hideLoader() {
+  document.getElementById("loader").classList.add("hidden");
 }

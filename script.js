@@ -58,6 +58,7 @@ const addProjectBtn = document.getElementById("addProjectBtn");
 
 const sortSelect = document.getElementById("sortSelect");
 const filterSelect = document.getElementById("filterSelect");
+const toggleSortOrderBtn = document.getElementById("toggleSortOrderBtn");
 
 const themeCheckbox = document.getElementById("themeCheckbox");
 if (localStorage.getItem("theme")) {
@@ -106,6 +107,7 @@ function isDueSoon(dueDate) {
 }
 
 function renderProjects() {
+  showLoader();
   projectList.innerHTML = "";
   projects.forEach((proj) => {
     const li = document.createElement("li");
@@ -164,9 +166,11 @@ function renderProjects() {
     li.appendChild(buttonContainer);
     projectList.appendChild(li);
   });
+  hideLoader();
 }
 
 async function renderTasks() {
+  showLoader();
   if (!selectedProjectId) {
     taskList.innerHTML = "<li>Nessun progetto selezionato</li>";
     return;
@@ -265,6 +269,7 @@ async function renderTasks() {
 
     taskList.appendChild(li);
   });
+  hideLoader();
 }
 
 function openEditTaskModal(task) {
@@ -347,6 +352,11 @@ function updateTasks() {
 
 sortSelect.onchange = () => renderTasks();
 filterSelect.onchange = () => renderTasks();
+toggleSortOrderBtn.onclick = () => {
+  sortOrder = sortOrder === "asc" ? "desc" : "asc";
+  toggleSortOrderBtn.textContent = sortOrder === "asc" ? "⬆️" : "⬇️";
+  renderTasks();
+};
 
 themeCheckbox.onchange = () => {
   document.body.classList.toggle("dark", themeCheckbox.checked);
@@ -389,6 +399,14 @@ addProjectBtn.onclick = () => {
   renderProjects();
   projectModal.classList.remove("show");
 };
+
+function showLoader() {
+  document.getElementById("loader").classList.remove("hidden");
+}
+
+function hideLoader() {
+  document.getElementById("loader").classList.add("hidden");
+}
 
 renderProjects();
 renderTasks();
